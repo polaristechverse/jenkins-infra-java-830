@@ -1,25 +1,4 @@
-# Multi-stage Dockerfile for Spring Boot application
-
-# Stage 1: Build the application
-FROM maven:3.8.5-openjdk-11 AS build
-
-# Set working directory
-WORKDIR /app
-
-# Copy pom.xml for dependency resolution
-COPY pom.xml .
-
-# Download dependencies (this layer can be cached)
-RUN mvn dependency:go-offline
-
-# Copy source code
-COPY src ./src
-
-# Build the application
-RUN mvn package -DskipTests
-
-# Stage 2: Create the runtime image
-FROM openjdk:11-jre-slim
+FROM openjdk:11-ea-17-jre-slim
 
 # Add application metadata
 LABEL maintainer="Chaitanya"
@@ -29,7 +8,7 @@ LABEL application="Simple Spring Boot App"
 WORKDIR /app
 
 # Copy only the built JAR from the build stage
-COPY --from=build /app/target/demo-0.0.1-SNAPSHOT.jar app.jar
+COPY target/demo-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose the application port
 EXPOSE 8080
