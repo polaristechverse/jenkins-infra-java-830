@@ -1,29 +1,38 @@
-FROM ubuntu:latest
+# Multi-stage Dockerfile for Spring Boot application
 
-# Avoid prompts from apt
-ENV DEBIAN_FRONTEND=noninteractive
+# Stage 1: Build the application
+FROM maven:3.8.5-openjdk-11 AS build
 
-# Install OpenJDK 11 and Maven
-RUN apt-get update && \
-    apt-get install -y openjdk-11-jdk maven && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Verify installations
-RUN java -version && mvn -version
-
-# Set up working directory
+# Set working directory
 WORKDIR /app
 
-# Copy source code
+# Copy pom.xml for dependency resolution
 COPY pom.xml .
-COPY src src
 
-# Build the application with Maven
+# Download dependencies (this layer can be cached)
+RUN mvn dependency:go-offline
+
+# Copy source code
+COPY src ./src
+
+# Build the application
 RUN mvn package -DskipTests
 
-# Expose port 8080
-EXPOSE 5600
+# Stage 2: Create the runtime image
+FROM openjdk:11-jre-slim
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "target/demo-0.0.1-SNAPSHOT.jar"]
+# Add application metadata
+LABEL maintainer="Chaitanya"
+LABEL application="Simple Spring Boot App"
+
+# Set working directory
+WORKDIR /app
+
+# Copy only the built JAR from the build stage
+COPY --from=build /app/target/demo-0.0.1-SNAPSHOT.jar app.jar
+
+# Expose the application port
+EXPOSE 8080
+
+# Set entry point
+ENTRYPOINT ["java", "-jar", "app.jar"]
