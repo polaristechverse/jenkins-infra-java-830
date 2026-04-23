@@ -12,5 +12,12 @@ pipeline {
                 sh 'docker ps'
             }
         }
+        stage('Maven Build'){
+            steps{
+                sh 'mvn -version'
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+        
     }
 }
