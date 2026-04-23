@@ -28,6 +28,12 @@ pipeline {
                 sh 'docker build -t ${Image_Name}:v${Image_Version} .'
             }
         }
+        stage('Docker Run'){
+            steps{
+                sh 'docker ps'
+                sh 'docker run -itd --name countapp -p 5600:5600 ${Image_Name}:v${Image_Version}'
+            }
+        }
         
     }
 }
