@@ -25,7 +25,7 @@ pipeline {
         stage('Docker Build'){
             steps{
                 sh 'docker ps'
-                sh 'docker build -t ${Image_Name}:v${Image_Version}'
+                sh 'docker build -t ${Image_Name}:v${Image_Version} .'
             }
         }
         
