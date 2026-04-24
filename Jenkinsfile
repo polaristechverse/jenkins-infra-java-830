@@ -3,7 +3,7 @@ pipeline {
         label 'Dev'
     }
     environment {
-        Image_Name = 'javaslim'
+        Image_Name = 'chaitanyamanikumar/javaslim'
         Image_Version    = "${env.BUILD_NUMBER}"
         DOCKER_CREDS = "DockerHubAccess"
         TF_DIR = "/home/ubuntu/workspace/infrapipeline_master"
