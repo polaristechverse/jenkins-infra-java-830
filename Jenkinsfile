@@ -10,7 +10,7 @@ pipeline {
     }
     parameters {
     choice(name: 'Docker_Build', choices: ['yes', 'no'], description: 'Build & Push Docker Image')
-    `}       
+    }       
     stages{
         stage('check softwate'){
             steps {
